@@ -15,9 +15,9 @@ namespace myTiles {
     //% fixedInstance jres blockIdentity=images._tile
     export const tile3 = image.ofBuffer(hex``);
     //% fixedInstance jres blockIdentity=images._tile
-    export const tile5 = image.ofBuffer(hex``);
-    //% fixedInstance jres blockIdentity=images._tile
     export const tile4 = image.ofBuffer(hex``);
+    //% fixedInstance jres blockIdentity=images._tile
+    export const tile5 = image.ofBuffer(hex``);
 
     helpers._registerFactory("tilemap", function(name: string) {
         switch(helpers.stringTrim(name)) {
@@ -113,7 +113,7 @@ namespace myTiles {
 2 2 2 . . . . . . 2 2 2 . . . . 2 2 2 2 2 2 2 . . 2 2 2 2 2 
 `, [myTiles.transparency16,myTiles.tile1,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile2,sprites.builtin.oceanSand8,sprites.builtin.oceanSand13,sprites.builtin.oceanSand14,sprites.builtin.oceanSand15,myTiles.tile6,sprites.builtin.oceanSand3,sprites.builtin.oceanSand1,sprites.builtin.oceanSand2,sprites.dungeon.hazardLava0,sprites.dungeon.hazardLava1,sprites.builtin.forestTiles1,sprites.builtin.forestTiles2,sprites.builtin.forestTiles3,sprites.builtin.forestTiles8,sprites.builtin.forestTiles5,sprites.builtin.forestTiles6,sprites.builtin.forestTiles7,sprites.builtin.forestTiles10,sprites.builtin.forestTiles11], TileScale.Sixteen);
             case "platformer1":
-            case "level":return tiles.createTilemap(hex`1e000a00000000000004040400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000080000000000000000000200000000000004080004040404040004040000080000000100030001000100000000000000080000000000000000000000000004000101010101000105000000000000000000000000000000000000000000000101010101010101010100000000000500000000000501010000000000010101010101010101010101010101010101010101010101010000000001010101010101010101010101010101010101010101010101010606070607010101010101`, img`
+            case "level":return tiles.createTilemap(hex`1e000a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000004000400000200000000000000080000000000000000000000080000000100030001000100000000000000080000000000000000040000000000000101010101000105000000040400000000040404000000000000000000000101010101010101010100000000000500000000000501010000040000010101010101010101010101010101010101010101010101010000000001010101010101010101010101010101010101010101010101010606070607010101010101`, img`
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -141,8 +141,8 @@ namespace myTiles {
             case "myTiles.tile0":
             case "tile50":return tile50;
             case "tile3":return tile3;
-            case "tile5":return tile5;
             case "tile4":return tile4;
+            case "tile5":return tile5;
         }
         return null;
     })

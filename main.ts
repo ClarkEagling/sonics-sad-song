@@ -3,6 +3,7 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`tile4`, function (sprite, loc
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     mySprite.vy = -230
+    music.playMelody("C D E F G A B C5 ", 2400)
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava0, function (sprite, location) {
     game.over(false, effects.slash)
@@ -78,20 +79,17 @@ for (let value of tiles.getTilesByType(assets.tile`tile5`)) {
         ................
         ................
         ................
-        ................
-        ................
-        ................
-        ................
-        ....fffffffff...
+        ...ffffffffffff.
         `, SpriteKind.Enemy)
-    myEnemy.ay = 500
+    myEnemy.vx = randint(-30, 30)
     tiles.placeOnTile(myEnemy, value)
-    myEnemy.vx = randint(3, -15)
+    myEnemy.ay = 500
 }
 game.onUpdate(function () {
     for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
         if (!(value.tileKindAt(TileDirection.Left, assets.tile`transparency16`))) {
             value.vx = value.vx * -1
+            value.vy = -100
         } else if (!(value.tileKindAt(TileDirection.Right, assets.tile`transparency16`))) {
             value.vx = value.vx * -1
         } else if (value.tileKindAt(TileDirection.Bottom, assets.tile`transparency16`)) {
