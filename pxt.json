@@ -1,0 +1,30 @@
+{
+    "name": "sonics sad song",
+    "description": "",
+    "dependencies": {
+        "device": "*"
+    },
+    "files": [
+        "main.blocks",
+        "main.ts",
+        "README.md",
+        "assets.json",
+        "tilemap.g.jres",
+        "tilemap.g.ts"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "targetVersions": {
+        "branch": "v1.4.43",
+        "tag": "v1.4.43",
+        "commits": "https://github.com/microsoft/pxt-arcade/commits/d613fa29c3c700e4b7d90381ed39b7e65b0de04e",
+        "target": "1.4.44",
+        "pxt": "6.12.25",
+        "targetId": "arcade"
+    },
+    "supportedTargets": [
+        "arcade"
+    ],
+    "preferredEditor": "blocksprj"
+}
