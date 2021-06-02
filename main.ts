@@ -48,6 +48,7 @@ mySprite = sprites.create(img`
     . . 8 2 2 2 2 2 8 8 8 2 2 2 2 2 
     . . . 2 2 2 2 2 . . . 2 2 2 2 2 
     `, SpriteKind.Player)
+mySprite.say("oh so sad", 500)
 controller.moveSprite(mySprite, 100, 0)
 mySprite.ay = 500
 scene.cameraFollowSprite(mySprite)
@@ -85,5 +86,16 @@ for (let value of tiles.getTilesByType(assets.tile`tile5`)) {
         `, SpriteKind.Enemy)
     myEnemy.ay = 500
     tiles.placeOnTile(myEnemy, value)
-    myEnemy.follow(mySprite, 10)
+    myEnemy.vx = randint(3, -15)
 }
+game.onUpdate(function () {
+    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
+        if (!(value.tileKindAt(TileDirection.Left, assets.tile`transparency16`))) {
+            value.vx = value.vx * -1
+        } else if (!(value.tileKindAt(TileDirection.Right, assets.tile`transparency16`))) {
+            value.vx = value.vx * -1
+        } else if (value.tileKindAt(TileDirection.Bottom, assets.tile`transparency16`)) {
+            value.vx = value.vx * -1
+        }
+    }
+})
