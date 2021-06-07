@@ -86,6 +86,9 @@ function NextLevel () {
         game.over(true)
     }
     tiles.placeOnRandomTile(mySprite, assets.tile`tile3`)
+    for (let index = 0; index < 4; index++) {
+        tiles.placeOnRandomTile(foods._pickRandom(), assets.tile`transparency16`)
+    }
     for (let value of tiles.getTilesByType(assets.tile`tile5`)) {
         myEnemy = sprites.create(img`
             ................
@@ -113,22 +116,27 @@ function NextLevel () {
             ................
             ...ffffffffffff.
             `, SpriteKind.Enemy)
-        myEnemy.vx = randint(-30, 30)
+        myEnemy.vx = randint(10, 30)
         tiles.placeOnTile(myEnemy, value)
         myEnemy.ay = 500
     }
 }
 function InvincibleFlash () {
     info.changeLifeBy(-1)
-    for (let index = 0; index < 3; index++) {
-        FXhurt.play()
-        pause(75)
-        FXhurt.freq0 += -100
-    }
+    FXhurt.play()
+    FXhurt.freq0 += -200
     mySprite.setKind(SpriteKind.Invincible)
     mySprite.startEffect(effects.coolRadial)
     mySprite.lifespan = 1000
 }
+info.onLifeZero(function () {
+    game.reset()
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
+    otherSprite.destroy()
+    FXchomp.play()
+    info.changeLifeBy(1)
+})
 sprites.onOverlap(SpriteKind.Invincible, SpriteKind.Enemy, function (sprite, otherSprite) {
     if (sprite.bottom < otherSprite.y) {
         sprite.vy = -230
@@ -143,6 +151,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
     if (sprite.bottom < otherSprite.y) {
         sprite.vy = -230
         FXbounce.play()
+        info.changeScoreBy(10)
     } else {
         InvincibleFlash()
     }
@@ -154,7 +163,44 @@ let FXhowl: SoundBuffer = null
 let FXbounce: SoundBuffer = null
 let FXjump: SoundBuffer = null
 let FXhurt: SoundBuffer = null
+let FXchomp: SoundBuffer = null
 let sadPhrases: string[] = []
+let foods: Sprite[] = []
+foods = [sprites.create(img`
+    4 4 4 . . 4 4 4 4 4 . . . . . . 
+    4 5 5 4 4 5 5 5 5 5 4 4 . . . . 
+    b 4 5 5 1 5 1 1 1 5 5 5 4 . . . 
+    . b 5 5 5 5 1 1 5 5 1 1 5 4 . . 
+    . b d 5 5 5 5 5 5 5 5 1 1 5 4 . 
+    b 4 5 5 5 5 5 5 5 5 5 5 1 5 4 . 
+    c d 5 5 5 5 5 5 5 5 5 5 5 5 5 4 
+    c d 4 5 5 5 5 5 5 5 5 5 5 1 5 4 
+    c 4 5 5 5 d 5 5 5 5 5 5 5 5 5 4 
+    c 4 d 5 4 5 d 5 5 5 5 5 5 5 5 4 
+    . c 4 5 5 5 5 d d d 5 5 5 5 5 b 
+    . c 4 d 5 4 5 d 4 4 d 5 5 5 4 c 
+    . . c 4 4 d 4 4 4 4 4 d d 5 d c 
+    . . . c 4 4 4 4 4 4 4 4 5 5 5 4 
+    . . . . c c b 4 4 4 b b 4 5 4 4 
+    . . . . . . c c c c c c b b 4 . 
+    `, SpriteKind.Food), sprites.create(img`
+    6 6 6 . . 6 6 6 6 6 . . . . . . 
+    6 7 7 6 6 7 7 7 7 7 6 6 . . . . 
+    b 6 7 7 1 7 1 1 1 7 7 7 6 . . . 
+    . b 7 7 7 7 1 1 7 7 1 1 7 6 . . 
+    . b d 7 7 7 7 7 7 7 7 1 1 7 6 . 
+    b 6 7 7 7 7 7 7 7 7 7 7 1 7 6 . 
+    c d 7 7 7 7 7 7 7 7 7 7 7 7 7 6 
+    c d 6 7 7 7 7 7 7 7 7 7 7 1 7 6 
+    c 6 7 7 7 d 7 7 7 7 7 7 7 7 7 6 
+    c 6 d 7 6 7 d 7 7 7 7 7 7 7 7 6 
+    . c 6 7 7 7 7 d d d 7 7 7 7 7 b 
+    . c 6 d 7 6 7 d 6 6 d 7 7 7 6 c 
+    . . c 6 6 d 6 6 6 6 6 d d 7 d c 
+    . . . c 6 6 6 6 6 6 6 6 7 7 7 6 
+    . . . . c c b 6 6 6 b b 6 7 6 6 
+    . . . . . . c c c c c c b b 6 . 
+    `, SpriteKind.Food)]
 sadPhrases = [
 "no fair",
 "oh no!",
@@ -163,21 +209,21 @@ sadPhrases = [
 "not cool",
 "this game stinks"
 ]
+FXchomp = soundEffects.createSound(soundEffects.waveNumber(WaveType.Cycle16), 100, 1000, 2000)
 FXhurt = soundEffects.createSound(soundEffects.waveNumber(WaveType.Sine), 200, 1200, 200, 255, 100)
 FXjump = soundEffects.createSound(soundEffects.waveNumber(WaveType.Triangle), 250, 500, 80, 255, 0)
-FXbounce = soundEffects.createSound(soundEffects.waveNumber(WaveType.Cycle32), 150, 440, 1000)
+FXbounce = soundEffects.createSound(soundEffects.waveNumber(WaveType.Cycle16), 150, 440, 1000)
 FXhowl = soundEffects.createSound(soundEffects.waveNumber(WaveType.Square10), 3333, 333, 90, 100, 0)
 NextLevel()
 CreatePlayer()
 game.onUpdate(function () {
     for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
-        if (!(value.tileKindAt(TileDirection.Left, assets.tile`transparency16`))) {
-            value.vx = value.vx * -1
+        if (value.isHittingTile(CollisionDirection.Left)) {
+            value.vx = randint(10, 30)
             value.vy = -100
-        } else if (!(value.tileKindAt(TileDirection.Right, assets.tile`transparency16`))) {
-            value.vx = value.vx * -1
-        } else if (value.tileKindAt(TileDirection.Bottom, assets.tile`transparency16`)) {
-            value.vx = value.vx * -1
+        } else if (value.isHittingTile(CollisionDirection.Right)) {
+            value.vx = randint(-10, -30)
+            value.vy = -100
         }
     }
 })
