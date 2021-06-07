@@ -1,5 +1,6 @@
 {
     "name": "Clark E sonics sad song",
+    "version": "0.1.0",
     "description": "",
     "dependencies": {
         "device": "*",
