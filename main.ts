@@ -1,9 +1,14 @@
+namespace SpriteKind {
+    export const Invincible = SpriteKind.create()
+}
 scene.onOverlapTile(SpriteKind.Player, assets.tile`tile4`, function (sprite, location) {
     game.over(true, effects.blizzard)
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    mySprite.vy = -230
-    music.playMelody("C D E F G A B C5 ", 2400)
+    if (mySprite.isHittingTile(CollisionDirection.Bottom)) {
+        mySprite.vy = -230
+        FXjump.play()
+    }
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava0, function (sprite, location) {
     game.over(false, effects.slash)
@@ -14,6 +19,14 @@ scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava1, function (sp
 scene.onOverlapTile(SpriteKind.Player, assets.tile`tile2`, function (sprite, location) {
     game.over(false, effects.slash)
 })
+sprites.onDestroyed(SpriteKind.Invincible, function (sprite) {
+    mySprite.setKind(SpriteKind.Player)
+    mySprite.setPosition(sprite.x, sprite.y)
+})
+function InvincibleFlash () {
+    mySprite.setKind(SpriteKind.Invincible)
+    mySprite.destroy(effects.disintegrate, 500)
+}
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTiles.tile`, function (sprite, location) {
     game.over(false, effects.slash)
 })
@@ -21,14 +34,21 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
     otherSprite.destroy(effects.confetti, 100)
     if (sprite.bottom < otherSprite.y) {
         sprite.vy = -230
-        music.pewPew.play()
+        FXbounce.play()
     } else {
         info.changeLifeBy(-1)
-        music.zapped.play()
+        FXhurt.play()
+        InvincibleFlash()
     }
 })
 let myEnemy: Sprite = null
 let mySprite: Sprite = null
+let FXbounce: SoundBuffer = null
+let FXhurt: SoundBuffer = null
+let FXjump: SoundBuffer = null
+FXjump = soundEffects.createSound(soundEffects.waveNumber(WaveType.Triangle), 250, 80, 1000)
+FXhurt = soundEffects.createSound(soundEffects.waveNumber(WaveType.Sine), 333, 1400, 60, 255, 100)
+FXbounce = soundEffects.createSound(soundEffects.waveNumber(WaveType.Cycle32), 150, 440, 1000)
 scene.setBackgroundColor(15)
 tiles.setTilemap(tilemap`platformer1`)
 mySprite = sprites.create(img`

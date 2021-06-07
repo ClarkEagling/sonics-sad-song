@@ -1,8 +1,9 @@
 {
-    "name": "sonics sad song",
+    "name": "Clark E sonics sad song",
     "description": "",
     "dependencies": {
-        "device": "*"
+        "device": "*",
+        "sound effects": "github:klausw3/pxt-sound-effects#v1.1.0"
     },
     "files": [
         "main.blocks",
