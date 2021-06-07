@@ -1,6 +1,12 @@
 namespace SpriteKind {
     export const Invincible = SpriteKind.create()
+    export const Coin = SpriteKind.create()
 }
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Coin, function (sprite, otherSprite) {
+    otherSprite.destroy()
+    music.playMelody("G - - - C5 - - - ", 3000)
+    info.changeScoreBy(3)
+})
 scene.onOverlapTile(SpriteKind.Player, assets.tile`tile4`, function (sprite, location) {
     currentLevel += 1
     NextLevel()
@@ -50,6 +56,15 @@ sprites.onDestroyed(SpriteKind.Invincible, function (sprite) {
     CreatePlayer().setPosition(sprite.x, sprite.y)
 })
 function NextLevel () {
+    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
+        value.destroy()
+    }
+    for (let value of sprites.allOfKind(SpriteKind.Food)) {
+        value.destroy()
+    }
+    for (let value of sprites.allOfKind(SpriteKind.Coin)) {
+        value.destroy()
+    }
     game.setDialogTextColor(2)
     game.setDialogFrame(img`
         f f f f f f f f f f f f f f c 
@@ -69,7 +84,8 @@ function NextLevel () {
         f f f f f f f f f f f f f f f 
         `)
     effects.blizzard.startScreenEffect(3333)
-    FXhowl.play()
+    FXHowl.play()
+    FXhowl2.play()
     if (currentLevel == 0) {
         scene.setBackgroundColor(15)
         tiles.setTilemap(tilemap`platformer11`)
@@ -86,8 +102,75 @@ function NextLevel () {
         game.over(true)
     }
     tiles.placeOnRandomTile(mySprite, assets.tile`tile3`)
-    for (let index = 0; index < 4; index++) {
+    for (let index = 0; index < 2; index++) {
+        foods = [sprites.create(img`
+            4 4 4 . . 4 4 4 4 4 . . . . . . 
+            4 5 5 4 4 5 5 5 5 5 4 4 . . . . 
+            b 4 5 5 1 5 1 1 1 5 5 5 4 . . . 
+            . b 5 5 5 5 1 1 5 5 1 1 5 4 . . 
+            . b d 5 5 5 5 5 5 5 5 1 1 5 4 . 
+            b 4 5 5 5 5 5 5 5 5 5 5 1 5 4 . 
+            c d 5 5 5 5 5 5 5 5 5 5 5 5 5 4 
+            c d 4 5 5 5 5 5 5 5 5 5 5 1 5 4 
+            c 4 5 5 5 d 5 5 5 5 5 5 5 5 5 4 
+            c 4 d 5 4 5 d 5 5 5 5 5 5 5 5 4 
+            . c 4 5 5 5 5 d d d 5 5 5 5 5 b 
+            . c 4 d 5 4 5 d 4 4 d 5 5 5 4 c 
+            . . c 4 4 d 4 4 4 4 4 d d 5 d c 
+            . . . c 4 4 4 4 4 4 4 4 5 5 5 4 
+            . . . . c c b 4 4 4 b b 4 5 4 4 
+            . . . . . . c c c c c c b b 4 . 
+            `, SpriteKind.Food), sprites.create(img`
+            6 6 6 . . 6 6 6 6 6 . . . . . . 
+            6 7 7 6 6 7 7 7 7 7 6 6 . . . . 
+            b 6 7 7 1 7 1 1 1 7 7 7 6 . . . 
+            . b 7 7 7 7 1 1 7 7 1 1 7 6 . . 
+            . b d 7 7 7 7 7 7 7 7 1 1 7 6 . 
+            b 6 7 7 7 7 7 7 7 7 7 7 1 7 6 . 
+            c d 7 7 7 7 7 7 7 7 7 7 7 7 7 6 
+            c d 6 7 7 7 7 7 7 7 7 7 7 1 7 6 
+            c 6 7 7 7 d 7 7 7 7 7 7 7 7 7 6 
+            c 6 d 7 6 7 d 7 7 7 7 7 7 7 7 6 
+            . c 6 7 7 7 7 d d d 7 7 7 7 7 b 
+            . c 6 d 7 6 7 d 6 6 d 7 7 7 6 c 
+            . . c 6 6 d 6 6 6 6 6 d d 7 d c 
+            . . . c 6 6 6 6 6 6 6 6 7 7 7 6 
+            . . . . c c b 6 6 6 b b 6 7 6 6 
+            . . . . . . c c c c c c b b 6 . 
+            `, SpriteKind.Food)]
         tiles.placeOnRandomTile(foods._pickRandom(), assets.tile`transparency16`)
+    }
+    for (let index = 0; index < 4; index++) {
+        coin = sprites.create(assets.tile`myTile`, SpriteKind.Coin)
+        animation.runImageAnimation(
+        coin,
+        [img`
+            . . . . . . . . . . 
+            . . . . 5 . . . . . 
+            . . 5 5 5 5 5 . . . 
+            . . 5 4 4 4 4 . . . 
+            . . 5 4 . . . . . . 
+            . . 5 4 . . . . . . 
+            . . 5 4 4 4 4 . . . 
+            . . 5 5 5 5 5 . . . 
+            . . . . 5 . . . . . 
+            . . . . . . . . . . 
+            `,img`
+            . . . . . . . . . . 
+            . . . . 4 . . . . . 
+            . . 4 4 4 4 4 . . . 
+            . . 4 2 2 2 2 . . . 
+            . . 4 2 . . . . . . 
+            . . 4 2 . . . . . . 
+            . . 4 2 2 2 2 . . . 
+            . . 4 4 4 4 4 . . . 
+            . . . . 4 . . . . . 
+            . . . . . . . . . . 
+            `],
+        200,
+        true
+        )
+        tiles.placeOnRandomTile(coin, assets.tile`transparency16`)
     }
     for (let value of tiles.getTilesByType(assets.tile`tile5`)) {
         myEnemy = sprites.create(img`
@@ -158,50 +241,17 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
     }
 })
 let myEnemy: Sprite = null
+let coin: Sprite = null
+let foods: Sprite[] = []
 let mySprite: Sprite = null
 let currentLevel = 0
-let FXhowl: SoundBuffer = null
+let FXhowl2: SoundBuffer = null
+let FXHowl: SoundBuffer = null
 let FXbounce: SoundBuffer = null
 let FXjump: SoundBuffer = null
 let FXhurt: SoundBuffer = null
 let FXchomp: SoundBuffer = null
 let sadPhrases: string[] = []
-let foods: Sprite[] = []
-foods = [sprites.create(img`
-    4 4 4 . . 4 4 4 4 4 . . . . . . 
-    4 5 5 4 4 5 5 5 5 5 4 4 . . . . 
-    b 4 5 5 1 5 1 1 1 5 5 5 4 . . . 
-    . b 5 5 5 5 1 1 5 5 1 1 5 4 . . 
-    . b d 5 5 5 5 5 5 5 5 1 1 5 4 . 
-    b 4 5 5 5 5 5 5 5 5 5 5 1 5 4 . 
-    c d 5 5 5 5 5 5 5 5 5 5 5 5 5 4 
-    c d 4 5 5 5 5 5 5 5 5 5 5 1 5 4 
-    c 4 5 5 5 d 5 5 5 5 5 5 5 5 5 4 
-    c 4 d 5 4 5 d 5 5 5 5 5 5 5 5 4 
-    . c 4 5 5 5 5 d d d 5 5 5 5 5 b 
-    . c 4 d 5 4 5 d 4 4 d 5 5 5 4 c 
-    . . c 4 4 d 4 4 4 4 4 d d 5 d c 
-    . . . c 4 4 4 4 4 4 4 4 5 5 5 4 
-    . . . . c c b 4 4 4 b b 4 5 4 4 
-    . . . . . . c c c c c c b b 4 . 
-    `, SpriteKind.Food), sprites.create(img`
-    6 6 6 . . 6 6 6 6 6 . . . . . . 
-    6 7 7 6 6 7 7 7 7 7 6 6 . . . . 
-    b 6 7 7 1 7 1 1 1 7 7 7 6 . . . 
-    . b 7 7 7 7 1 1 7 7 1 1 7 6 . . 
-    . b d 7 7 7 7 7 7 7 7 1 1 7 6 . 
-    b 6 7 7 7 7 7 7 7 7 7 7 1 7 6 . 
-    c d 7 7 7 7 7 7 7 7 7 7 7 7 7 6 
-    c d 6 7 7 7 7 7 7 7 7 7 7 1 7 6 
-    c 6 7 7 7 d 7 7 7 7 7 7 7 7 7 6 
-    c 6 d 7 6 7 d 7 7 7 7 7 7 7 7 6 
-    . c 6 7 7 7 7 d d d 7 7 7 7 7 b 
-    . c 6 d 7 6 7 d 6 6 d 7 7 7 6 c 
-    . . c 6 6 d 6 6 6 6 6 d d 7 d c 
-    . . . c 6 6 6 6 6 6 6 6 7 7 7 6 
-    . . . . c c b 6 6 6 b b 6 7 6 6 
-    . . . . . . c c c c c c b b 6 . 
-    `, SpriteKind.Food)]
 sadPhrases = [
 "no fair",
 "oh no!",
@@ -214,7 +264,8 @@ FXchomp = soundEffects.createSound(soundEffects.waveNumber(WaveType.Cycle16), 10
 FXhurt = soundEffects.createSound(soundEffects.waveNumber(WaveType.Sine), 200, 1200, 200, 255, 100)
 FXjump = soundEffects.createSound(soundEffects.waveNumber(WaveType.Triangle), 250, 500, 80, 255, 0)
 FXbounce = soundEffects.createSound(soundEffects.waveNumber(WaveType.Cycle16), 150, 440, 1000)
-FXhowl = soundEffects.createSound(soundEffects.waveNumber(WaveType.Square10), 3333, 300, 90, 100, 0)
+FXHowl = soundEffects.createSound(soundEffects.waveNumber(WaveType.Square10), 3333, 300, 90, 100, 0)
+FXhowl2 = soundEffects.createSound(soundEffects.waveNumber(WaveType.Square10), 3333, 500, 90, 80, 0)
 NextLevel()
 CreatePlayer()
 game.onUpdate(function () {
