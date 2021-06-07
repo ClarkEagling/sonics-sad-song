@@ -2,7 +2,7 @@ namespace SpriteKind {
     export const Invincible = SpriteKind.create()
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`tile4`, function (sprite, location) {
-    game.over(false, effects.blizzard)
+    NextLevel()
 })
 function CreatePlayer () {
     mySprite = sprites.create(img`
@@ -27,11 +27,14 @@ function CreatePlayer () {
     controller.moveSprite(mySprite, 100, 0)
     mySprite.ay = 500
     scene.cameraFollowSprite(mySprite)
+    tiles.placeOnRandomTile(mySprite, assets.tile`tile3`)
     return mySprite
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    mySprite.vy = -230
-    FXjump.play()
+    if (mySprite.isHittingTile(CollisionDirection.Bottom)) {
+        mySprite.vy = -230
+        FXjump.play()
+    }
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava0, function (sprite, location) {
     InvincibleFlash()
@@ -45,6 +48,76 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`tile2`, function (sprite, loc
 sprites.onDestroyed(SpriteKind.Invincible, function (sprite) {
     CreatePlayer().setPosition(sprite.x, sprite.y)
 })
+function NextLevel () {
+    game.setDialogTextColor(2)
+    game.setDialogFrame(img`
+        c f f f f f f f f f f f f f f 
+        f c f f f f f f f f f f f f f 
+        f f f f f f f f f f f f f f f 
+        f f f c f f f f f f f f f f f 
+        f f f f c f f f f f f f f f f 
+        f f f f f f f f f f f f f f f 
+        f f f f f f c f f f f f f f f 
+        f f f f f f f c f f f f f f f 
+        f f f f f f f f f f f f f f f 
+        f f f f f f f f f c f f f f f 
+        f f f f f f f f f f c f f f f 
+        f f f f f f f f f f f f f f f 
+        f f f f f f f f f f f f c f f 
+        f f f f f f f f f f f f f c f 
+        f f f f f f f f f f f f f f f 
+        `)
+    effects.blizzard.startScreenEffect(3333)
+    FXhowl.play()
+    currentLevel += 1
+    if (currentLevel == 1) {
+        scene.setBackgroundColor(15)
+        tiles.setTilemap(tilemap`platformer11`)
+        game.showLongText("lake of tears", DialogLayout.Full)
+    } else if (currentLevel == 2) {
+        scene.setBackgroundColor(15)
+        tiles.setTilemap(tilemap`level01`)
+        game.showLongText("lake of spikes", DialogLayout.Full)
+    } else if (currentLevel == 3) {
+        scene.setBackgroundColor(15)
+        tiles.setTilemap(tilemap`platformer1`)
+        game.showLongText("watch out: sadness ahead", DialogLayout.Full)
+    } else {
+        game.over(true)
+    }
+    tiles.placeOnRandomTile(mySprite, assets.tile`tile3`)
+    for (let value of tiles.getTilesByType(assets.tile`tile5`)) {
+        myEnemy = sprites.create(img`
+            ................
+            ......111.......
+            ....111111......
+            ...111111111....
+            ..111111111111..
+            ..11cc1111cc111.
+            ..11c2c11c2cc11.
+            .111c2c11c2cc11.
+            .111bbb11bbb111.
+            .111111111111111
+            ..11111111111111
+            ..11bcccccccc11.
+            ..1111bbbbb1c11.
+            ..1111111111111.
+            ..1111111111111.
+            ..b1111b111b111.
+            ..b111bcb11cbbb.
+            ..cbbbc.cbb.ccc.
+            ................
+            ................
+            ................
+            ................
+            ................
+            ...ffffffffffff.
+            `, SpriteKind.Enemy)
+        myEnemy.vx = randint(-30, 30)
+        tiles.placeOnTile(myEnemy, value)
+        myEnemy.ay = 500
+    }
+}
 function InvincibleFlash () {
     info.changeLifeBy(-1)
     for (let index = 0; index < 3; index++) {
@@ -56,9 +129,6 @@ function InvincibleFlash () {
     mySprite.startEffect(effects.coolRadial)
     mySprite.lifespan = 1000
 }
-info.onLifeZero(function () {
-    game.reset()
-})
 sprites.onOverlap(SpriteKind.Invincible, SpriteKind.Enemy, function (sprite, otherSprite) {
     if (sprite.bottom < otherSprite.y) {
         sprite.vy = -230
@@ -77,58 +147,28 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
         InvincibleFlash()
     }
 })
-let mySprite: Sprite = null
 let myEnemy: Sprite = null
+let currentLevel = 0
+let mySprite: Sprite = null
+let FXhowl: SoundBuffer = null
 let FXbounce: SoundBuffer = null
 let FXjump: SoundBuffer = null
 let FXhurt: SoundBuffer = null
 let sadPhrases: string[] = []
 sadPhrases = [
-"not fair",
+"no fair",
 "oh no!",
 "too sad",
-"what a bummer",
+"what a shame",
 "not cool",
 "this game stinks"
 ]
 FXhurt = soundEffects.createSound(soundEffects.waveNumber(WaveType.Sine), 200, 1200, 200, 255, 100)
-FXjump = soundEffects.createSound(soundEffects.waveNumber(WaveType.Triangle), 250, 80, 1000)
+FXjump = soundEffects.createSound(soundEffects.waveNumber(WaveType.Triangle), 250, 500, 80, 255, 0)
 FXbounce = soundEffects.createSound(soundEffects.waveNumber(WaveType.Cycle32), 150, 440, 1000)
-scene.setBackgroundColor(15)
-tiles.setTilemap(tilemap`platformer1`)
-for (let value of tiles.getTilesByType(assets.tile`tile5`)) {
-    myEnemy = sprites.create(img`
-        ................
-        ......111.......
-        ....111111......
-        ...111111111....
-        ..111111111111..
-        ..11cc1111cc111.
-        ..11c2c11c2cc11.
-        .111c2c11c2cc11.
-        .111bbb11bbb111.
-        .111111111111111
-        ..11111111111111
-        ..11bcccccccc11.
-        ..1111bbbbb1c11.
-        ..1111111111111.
-        ..1111111111111.
-        ..b1111b111b111.
-        ..b111bcb11cbbb.
-        ..cbbbc.cbb.ccc.
-        ................
-        ................
-        ................
-        ................
-        ................
-        ...ffffffffffff.
-        `, SpriteKind.Enemy)
-    myEnemy.vx = randint(-30, 30)
-    tiles.placeOnTile(myEnemy, value)
-    myEnemy.ay = 500
-}
+FXhowl = soundEffects.createSound(soundEffects.waveNumber(WaveType.Square10), 3333, 333, 90, 100, 0)
+NextLevel()
 CreatePlayer()
-tiles.placeOnRandomTile(mySprite, assets.tile`tile3`)
 game.onUpdate(function () {
     for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
         if (!(value.tileKindAt(TileDirection.Left, assets.tile`transparency16`))) {
