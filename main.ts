@@ -30,10 +30,8 @@ function CreatePlayer () {
     return mySprite
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (mySprite.isHittingTile(CollisionDirection.Bottom)) {
-        mySprite.vy = -230
-        FXjump.play()
-    }
+    mySprite.vy = -230
+    FXjump.play()
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava0, function (sprite, location) {
     InvincibleFlash()
@@ -49,11 +47,24 @@ sprites.onDestroyed(SpriteKind.Invincible, function (sprite) {
 })
 function InvincibleFlash () {
     info.changeLifeBy(-1)
-    FXhurt.play()
+    for (let index = 0; index < 3; index++) {
+        FXhurt.play()
+        pause(75)
+        FXhurt.freq0 += -100
+    }
     mySprite.setKind(SpriteKind.Invincible)
     mySprite.startEffect(effects.coolRadial)
     mySprite.lifespan = 1000
 }
+info.onLifeZero(function () {
+    game.reset()
+})
+sprites.onOverlap(SpriteKind.Invincible, SpriteKind.Enemy, function (sprite, otherSprite) {
+    if (sprite.bottom < otherSprite.y) {
+        sprite.vy = -230
+        FXbounce.play()
+    }
+})
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTiles.tile`, function (sprite, location) {
     InvincibleFlash()
 })
