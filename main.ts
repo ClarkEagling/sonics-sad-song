@@ -2,6 +2,7 @@ namespace SpriteKind {
     export const Invincible = SpriteKind.create()
 }
 scene.onOverlapTile(SpriteKind.Player, assets.tile`tile4`, function (sprite, location) {
+    currentLevel += 1
     NextLevel()
 })
 function CreatePlayer () {
@@ -51,34 +52,33 @@ sprites.onDestroyed(SpriteKind.Invincible, function (sprite) {
 function NextLevel () {
     game.setDialogTextColor(2)
     game.setDialogFrame(img`
-        c f f f f f f f f f f f f f f 
-        f c f f f f f f f f f f f f f 
+        f f f f f f f f f f f f f f c 
+        f f f f f f f f f f f f f c f 
         f f f f f f f f f f f f f f f 
-        f f f c f f f f f f f f f f f 
-        f f f f c f f f f f f f f f f 
+        f f f f f f f f f f f f f f f 
+        f f f f f f f f f f f f f f f 
+        f f f f f f f f f f f f f f f 
+        f f f f f f f f f f f f f f f 
         f f f f f f f f f f f f f f f 
         f f f f f f c f f f f f f f f 
-        f f f f f f f c f f f f f f f 
+        f f f f f c f f f f f f f f f 
         f f f f f f f f f f f f f f f 
-        f f f f f f f f f c f f f f f 
-        f f f f f f f f f f c f f f f 
         f f f f f f f f f f f f f f f 
-        f f f f f f f f f f f f c f f 
-        f f f f f f f f f f f f f c f 
+        f f f f f f f f f f f f f f f 
+        f f f f f f f f f f f f f f f 
         f f f f f f f f f f f f f f f 
         `)
     effects.blizzard.startScreenEffect(3333)
     FXhowl.play()
-    currentLevel += 1
-    if (currentLevel == 1) {
+    if (currentLevel == 0) {
         scene.setBackgroundColor(15)
         tiles.setTilemap(tilemap`platformer11`)
         game.showLongText("lake of tears", DialogLayout.Full)
-    } else if (currentLevel == 2) {
+    } else if (currentLevel == 1) {
         scene.setBackgroundColor(15)
         tiles.setTilemap(tilemap`level01`)
         game.showLongText("lake of spikes", DialogLayout.Full)
-    } else if (currentLevel == 3) {
+    } else if (currentLevel == 2) {
         scene.setBackgroundColor(15)
         tiles.setTilemap(tilemap`platformer1`)
         game.showLongText("watch out: sadness ahead", DialogLayout.Full)
@@ -123,14 +123,15 @@ function NextLevel () {
 }
 function InvincibleFlash () {
     info.changeLifeBy(-1)
+    FXhurt.freq0 = randint(800, 1300)
     FXhurt.play()
-    FXhurt.freq0 += -200
     mySprite.setKind(SpriteKind.Invincible)
     mySprite.startEffect(effects.coolRadial)
     mySprite.lifespan = 1000
 }
 info.onLifeZero(function () {
-    game.reset()
+    NextLevel()
+    info.setLife(3)
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
     otherSprite.destroy()
@@ -157,8 +158,8 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
     }
 })
 let myEnemy: Sprite = null
-let currentLevel = 0
 let mySprite: Sprite = null
+let currentLevel = 0
 let FXhowl: SoundBuffer = null
 let FXbounce: SoundBuffer = null
 let FXjump: SoundBuffer = null
@@ -213,7 +214,7 @@ FXchomp = soundEffects.createSound(soundEffects.waveNumber(WaveType.Cycle16), 10
 FXhurt = soundEffects.createSound(soundEffects.waveNumber(WaveType.Sine), 200, 1200, 200, 255, 100)
 FXjump = soundEffects.createSound(soundEffects.waveNumber(WaveType.Triangle), 250, 500, 80, 255, 0)
 FXbounce = soundEffects.createSound(soundEffects.waveNumber(WaveType.Cycle16), 150, 440, 1000)
-FXhowl = soundEffects.createSound(soundEffects.waveNumber(WaveType.Square10), 3333, 333, 90, 100, 0)
+FXhowl = soundEffects.createSound(soundEffects.waveNumber(WaveType.Square10), 3333, 300, 90, 100, 0)
 NextLevel()
 CreatePlayer()
 game.onUpdate(function () {
