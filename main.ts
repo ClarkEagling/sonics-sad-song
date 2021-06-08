@@ -252,6 +252,7 @@ let FXjump: SoundBuffer = null
 let FXhurt: SoundBuffer = null
 let FXchomp: SoundBuffer = null
 let sadPhrases: string[] = []
+let FXbackground = soundEffects.createSound(soundEffects.waveNumber(WaveType.Cycle16), 1000, 440, 440, 0, 50)
 sadPhrases = [
 "no fair",
 "oh no!",
@@ -278,4 +279,11 @@ game.onUpdate(function () {
             value.vy = -100
         }
     }
+})
+forever(function () {
+    FXbackground.duration = 1000
+    FXbackground.freq0 = 440
+    FXbackground.duration += randint(-100, 100)
+    FXbackground.freq0 += randint(-100, 100)
+    FXbackground.playUntilDone()
 })
