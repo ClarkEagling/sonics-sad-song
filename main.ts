@@ -14,20 +14,20 @@ scene.onOverlapTile(SpriteKind.Player, assets.tile`tile4`, function (sprite, loc
 function CreatePlayer () {
     mySprite = sprites.create(img`
         . . . . . . . . . . . . . . . . 
-        . . 8 8 8 8 8 8 8 8 8 8 8 . . . 
-        . . . 8 8 8 8 8 8 8 8 8 8 8 . . 
-        8 8 8 8 8 8 8 c 8 8 8 c 8 8 . . 
-        . 8 8 8 8 8 1 1 c 8 c 1 1 1 8 . 
-        . 8 8 8 8 1 1 f 1 c 8 1 f 1 8 . 
-        8 8 8 8 8 8 1 1 1 8 8 1 1 1 8 . 
-        . 8 8 8 8 8 9 8 8 8 8 8 9 8 8 . 
-        8 8 8 8 8 8 9 8 8 8 9 9 9 8 f f 
-        . 8 8 8 4 8 8 4 4 4 9 4 4 f f f 
-        . 1 1 8 4 8 8 4 4 4 9 4 4 4 8 . 
-        . 1 1 4 4 8 8 8 8 8 4 4 4 4 8 . 
-        . 8 8 8 8 8 8 8 8 8 8 8 8 8 8 . 
-        . 8 8 2 2 2 8 8 8 8 8 2 2 2 2 . 
-        . . 8 2 2 2 2 2 8 8 8 2 2 2 2 2 
+        . . 6 6 6 6 6 6 6 6 6 6 6 . . . 
+        . . . 6 6 6 6 6 6 6 6 6 6 6 . . 
+        6 6 6 6 6 6 6 c 6 6 6 c 6 6 . . 
+        . 6 6 6 6 6 1 1 c 6 c 1 1 1 6 . 
+        . 6 6 6 6 1 1 f 1 c 6 1 f 1 6 . 
+        6 6 6 6 6 6 1 1 1 6 6 1 1 1 6 . 
+        . 6 6 6 6 6 9 6 6 6 6 6 9 6 6 . 
+        6 6 6 6 6 6 9 6 6 6 9 9 9 6 3 3 
+        . 6 6 6 4 6 6 4 4 4 9 4 4 3 3 3 
+        . 1 1 6 4 6 6 4 4 4 9 4 4 4 6 . 
+        . 1 1 4 4 6 6 6 6 6 4 4 4 4 6 . 
+        . 6 6 6 6 6 6 6 6 6 6 6 6 6 6 . 
+        . 6 6 2 2 2 6 6 6 6 6 2 2 2 2 . 
+        . . 6 2 2 2 2 2 6 6 6 2 2 2 2 2 
         . . . 2 2 2 2 2 . . . 2 2 2 2 2 
         `, SpriteKind.Player)
     mySprite.say(sadPhrases._pickRandom(), 500)
@@ -44,12 +44,15 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava0, function (sprite, location) {
+    info.changeLifeBy(-3)
     InvincibleFlash()
 })
 scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava1, function (sprite, location) {
+    info.changeLifeBy(-3)
     InvincibleFlash()
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`tile2`, function (sprite, location) {
+    info.changeLifeBy(-3)
     InvincibleFlash()
 })
 sprites.onDestroyed(SpriteKind.Invincible, function (sprite) {
@@ -59,11 +62,11 @@ function NextLevel () {
     for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
         value.destroy()
     }
-    for (let value of sprites.allOfKind(SpriteKind.Food)) {
-        value.destroy()
+    for (let value2 of sprites.allOfKind(SpriteKind.Food)) {
+        value2.destroy()
     }
-    for (let value of sprites.allOfKind(SpriteKind.Coin)) {
-        value.destroy()
+    for (let value3 of sprites.allOfKind(SpriteKind.Coin)) {
+        value3.destroy()
     }
     game.setDialogTextColor(2)
     game.setDialogFrame(img`
@@ -99,6 +102,7 @@ function NextLevel () {
         tiles.setTilemap(tilemap`platformer1`)
         game.showLongText("watch out: sadness ahead", DialogLayout.Full)
     } else {
+        game.showLongText("Sunec found his way, finally, to the place where he belonged. The end.", DialogLayout.Full)
         game.over(true)
     }
     tiles.placeOnRandomTile(mySprite, assets.tile`tile3`)
@@ -172,7 +176,7 @@ function NextLevel () {
         )
         tiles.placeOnRandomTile(coin, assets.tile`transparency16`)
     }
-    for (let value of tiles.getTilesByType(assets.tile`tile5`)) {
+    for (let value4 of tiles.getTilesByType(assets.tile`tile5`)) {
         myEnemy = sprites.create(img`
             ................
             ......111.......
@@ -200,12 +204,11 @@ function NextLevel () {
             ...ffffffffffff.
             `, SpriteKind.Enemy)
         myEnemy.vx = randint(10, 30)
-        tiles.placeOnTile(myEnemy, value)
+        tiles.placeOnTile(myEnemy, value4)
         myEnemy.ay = 500
     }
 }
 function InvincibleFlash () {
-    info.changeLifeBy(-1)
     FXhurt.freq0 = randint(800, 1300)
     FXhurt.play()
     mySprite.setKind(SpriteKind.Invincible)
@@ -228,6 +231,7 @@ sprites.onOverlap(SpriteKind.Invincible, SpriteKind.Enemy, function (sprite, oth
     }
 })
 scene.onOverlapTile(SpriteKind.Player, assets.tile`myTiles.tile`, function (sprite, location) {
+    info.changeLifeBy(-3)
     InvincibleFlash()
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
@@ -237,6 +241,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
         FXbounce.play()
         info.changeScoreBy(10)
     } else {
+        info.changeLifeBy(-1)
         InvincibleFlash()
     }
 })
@@ -270,13 +275,13 @@ FXhowl2 = soundEffects.createSound(soundEffects.waveNumber(WaveType.Square10), 3
 NextLevel()
 CreatePlayer()
 game.onUpdate(function () {
-    for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
-        if (value.isHittingTile(CollisionDirection.Left)) {
-            value.vx = randint(10, 30)
-            value.vy = -100
-        } else if (value.isHittingTile(CollisionDirection.Right)) {
-            value.vx = randint(-10, -30)
-            value.vy = -100
+    for (let value5 of sprites.allOfKind(SpriteKind.Enemy)) {
+        if (value5.isHittingTile(CollisionDirection.Left)) {
+            value5.vx = randint(10, 30)
+            value5.vy = -100
+        } else if (value5.isHittingTile(CollisionDirection.Right)) {
+            value5.vx = randint(-10, -30)
+            value5.vy = -100
         }
     }
 })
