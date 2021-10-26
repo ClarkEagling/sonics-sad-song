@@ -2,14 +2,27 @@ namespace SpriteKind {
     export const Invincible = SpriteKind.create()
     export const Coin = SpriteKind.create()
 }
+scene.onOverlapTile(SpriteKind.Player, assets.tile`tile2`, function (sprite5, location4) {
+    info.changeLifeBy(-3)
+    InvincibleFlash()
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite7, otherSprite2) {
+    otherSprite2.destroy()
+    FXchomp.play()
+    info.changeLifeBy(1)
+})
+scene.onOverlapTile(SpriteKind.Player, assets.tile`tile4`, function (sprite2, location) {
+    currentLevel += 1
+    NextLevel()
+})
+scene.onOverlapTile(SpriteKind.Player, assets.tile`myTiles.tile`, function (sprite9, location5) {
+    info.changeLifeBy(-3)
+    InvincibleFlash()
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Coin, function (sprite, otherSprite) {
     otherSprite.destroy()
     music.playMelody("G - - - C5 - - - ", 3000)
     info.changeScoreBy(3)
-})
-scene.onOverlapTile(SpriteKind.Player, assets.tile`tile4`, function (sprite, location) {
-    currentLevel += 1
-    NextLevel()
 })
 function CreatePlayer () {
     mySprite = sprites.create(img`
@@ -43,20 +56,14 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         FXjump.play()
     }
 })
-scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava0, function (sprite, location) {
-    info.changeLifeBy(-3)
-    InvincibleFlash()
+sprites.onDestroyed(SpriteKind.Invincible, function (sprite6) {
+    CreatePlayer().setPosition(sprite6.x, sprite6.y)
 })
-scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava1, function (sprite, location) {
-    info.changeLifeBy(-3)
-    InvincibleFlash()
-})
-scene.onOverlapTile(SpriteKind.Player, assets.tile`tile2`, function (sprite, location) {
-    info.changeLifeBy(-3)
-    InvincibleFlash()
-})
-sprites.onDestroyed(SpriteKind.Invincible, function (sprite) {
-    CreatePlayer().setPosition(sprite.x, sprite.y)
+sprites.onOverlap(SpriteKind.Invincible, SpriteKind.Enemy, function (sprite8, otherSprite3) {
+    if (sprite8.bottom < otherSprite3.y) {
+        sprite8.vy = -230
+        FXbounce.play()
+    }
 })
 function NextLevel () {
     for (let value of sprites.allOfKind(SpriteKind.Enemy)) {
@@ -219,31 +226,24 @@ info.onLifeZero(function () {
     NextLevel()
     info.setLife(3)
 })
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
-    otherSprite.destroy()
-    FXchomp.play()
-    info.changeLifeBy(1)
-})
-sprites.onOverlap(SpriteKind.Invincible, SpriteKind.Enemy, function (sprite, otherSprite) {
-    if (sprite.bottom < otherSprite.y) {
-        sprite.vy = -230
-        FXbounce.play()
-    }
-})
-scene.onOverlapTile(SpriteKind.Player, assets.tile`myTiles.tile`, function (sprite, location) {
-    info.changeLifeBy(-3)
-    InvincibleFlash()
-})
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
-    otherSprite.destroy(effects.confetti, 100)
-    if (sprite.bottom < otherSprite.y) {
-        sprite.vy = -230
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite10, otherSprite4) {
+    otherSprite4.destroy(effects.confetti, 100)
+    if (sprite10.bottom < otherSprite4.y) {
+        sprite10.vy = -230
         FXbounce.play()
         info.changeScoreBy(10)
     } else {
         info.changeLifeBy(-1)
         InvincibleFlash()
     }
+})
+scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava0, function (sprite3, location2) {
+    info.changeLifeBy(-3)
+    InvincibleFlash()
+})
+scene.onOverlapTile(SpriteKind.Player, sprites.dungeon.hazardLava1, function (sprite4, location3) {
+    info.changeLifeBy(-3)
+    InvincibleFlash()
 })
 let myEnemy: Sprite = null
 let coin: Sprite = null
